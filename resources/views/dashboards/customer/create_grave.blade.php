@@ -115,14 +115,11 @@
         border: 2px solid #fff;
     }
 
-    /* Religion Colors */
-    .rel-islam { background: #22c55e; border-color: #16a34a; color: #f0fdf4; }
-    .rel-protestan { background: #3b82f6; border-color: #2563eb; color: #eff6ff; }
-    .rel-katolik { background: #eab308; border-color: #ca8a04; color: #fefce8; }
-    .rel-hindu { background: #a855f7; border-color: #9333ea; color: #faf5ff; }
-    .rel-budha { background: #ef4444; border-color: #dc2626; color: #fef2f2; }
-    .rel-konghucu { background: #06b6d4; border-color: #0891b2; color: #ecfeff; }
-    .rel-umum { background: #64748b; border-color: #475569; color: #f8fafc; }
+    /* Colors and Types */
+    .color-kuning { background: #fcd34d; border-color: #f59e0b; color: #92400e; }
+    .color-pink { background: #fca5a5; border-color: #ef4444; color: #7f1d1d; }
+    .color-biru { background: #93c5fd; border-color: #3b82f6; color: #1e3a8a; }
+    .color-ungu { background: #d8b4fe; border-color: #a855f7; color: #4c1d95; }
 
     .status-occupied-mini {
         position: relative;
@@ -180,6 +177,7 @@
                     @php
                         $allGraves = \App\Models\Grave::all();
                         $blocksGrouped = $allGraves->groupBy('block_name')->values();
+                        $classes = ['color-kuning', 'color-pink', 'color-biru', 'color-ungu'];
                     @endphp
                     
                     <div class="map-layout-mini">
@@ -187,10 +185,8 @@
                             <div class="blocks-container-mini">
                                 @foreach($blockRow as $blockIdx => $gravesInBlock)
                                     @php
-                                        $firstGrave = $gravesInBlock->first();
-                                        $religion = $firstGrave ? ($firstGrave->religion ?? 'umum') : 'umum';
-                                        $colorClass = 'rel-' . strtolower($religion);
-                                        $blockName = $firstGrave ? $firstGrave->block_name : 'Blok';
+                                        $colorClass = $classes[$blockIdx % 4];
+                                        $blockName = $gravesInBlock->first() ? $gravesInBlock->first()->block_name : 'Blok';
                                         $cleanBlockId = str_replace(' ', '_', $blockName);
                                     @endphp
                                     <div id="wrapper_{{ $cleanBlockId }}" style="transition: all 0.3s; padding: 5px; border-radius: 8px;">

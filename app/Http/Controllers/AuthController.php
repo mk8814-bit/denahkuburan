@@ -9,7 +9,7 @@ class AuthController extends Controller
 {
     public function showLogin()
     {
-        return view('auth.login');
+        return redirect('/');
     }
 
     public function login(Request $request)
@@ -24,9 +24,7 @@ class AuthController extends Controller
             return redirect()->intended('dashboard');
         }
 
-        return back()->with([
-            'error' => 'Email atau password salah.',
-        ]);
+        return redirect('/')->with('error', 'Email atau password salah.')->withInput($request->only('email'));
     }
 
     public function logout(Request $request)
@@ -34,7 +32,7 @@ class AuthController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect('/login');
+        return redirect('/');
     }
 
     public function showRegister()
@@ -57,6 +55,6 @@ class AuthController extends Controller
             'role' => 'customer', // Default role to customer
         ]);
 
-        return redirect()->route('login')->with('success', 'Registrasi berhasil! Silakan login.');
+        return redirect('/')->with('success', 'Registrasi berhasil! Silakan login.');
     }
 }

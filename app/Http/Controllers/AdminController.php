@@ -151,30 +151,12 @@ class AdminController extends Controller
     {
         $validated = $request->validate([
             'amount' => 'required|numeric',
-            'payment_date' => 'nullable|date',
+            'payment_date' => 'required|date',
             'status' => 'required|in:pending,confirmed,failed',
             'notes' => 'nullable|string',
         ]);
 
-        $oldStatus = $payment->status;
-        
-        // If status changed to confirmed, ensure date is set
-        if ($validated['status'] === 'confirmed' && empty($validated['payment_date'])) {
-            $validated['payment_date'] = now()->toDateString();
-        }
-
         $payment->update($validated);
-
-        // SYNC: If status becomes confirmed, update grave to 'occupied'
-        if ($validated['status'] === 'confirmed' && $payment->grave) {
-            $payment->grave->update(['status' => 'occupied']);
-        }
-        
-        // SYNC: If status was confirmed but changed to pending/failed, revert grave to 'booked' 
-        // (Only if it was previously occupied due to this payment)
-        if ($oldStatus === 'confirmed' && $validated['status'] !== 'confirmed' && $payment->grave) {
-            $payment->grave->update(['status' => 'booked']);
-        }
 
         return back()->with('success', 'Data pembayaran berhasil diperbarui.');
     }
@@ -183,7 +165,7 @@ class AdminController extends Controller
     {
         $payment->update([
             'status' => 'confirmed',
-            'payment_date' => $payment->payment_date ?: now()->toDateString(),
+            'payment_date' => $payment->payment_date ?? now(),
         ]);
 
         // Update grave status to occupied

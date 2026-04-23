@@ -97,13 +97,13 @@
     .plot-sub-label { font-size: 0.45rem; margin-top: 1px; }
 
     /* Religion Colors */
-    .rel-islam { background: #22c55e; border-color: #16a34a; color: #f0fdf4; }
-    .rel-protestan { background: #3b82f6; border-color: #2563eb; color: #eff6ff; }
-    .rel-katolik { background: #eab308; border-color: #ca8a04; color: #fefce8; }
-    .rel-hindu { background: #a855f7; border-color: #9333ea; color: #faf5ff; }
-    .rel-budha { background: #ef4444; border-color: #dc2626; color: #fef2f2; }
-    .rel-konghucu { background: #06b6d4; border-color: #0891b2; color: #ecfeff; }
-    .rel-umum { background: #64748b; border-color: #475569; color: #f8fafc; }
+    .rel-islam { background: #fee101; border-color: #fcc419; color: #826a00; }
+    .rel-protestan { background: #4dabf7; border-color: #339af0; color: #004b82; }
+    .rel-katolik { background: #fab005; border-color: #f08c00; color: #824b00; }
+    .rel-hindu { background: #be4bdb; border-color: #ae3ec9; color: #4b0082; }
+    .rel-budha { background: #ff8787; border-color: #fa5252; color: #820000; }
+    .rel-konghucu { background: #74c0fc; border-color: #4dabf7; color: #003e82; }
+    .rel-umum { background: #adb5bd; border-color: #868e96; color: #343a40; }
 
     /* Status Overlays */
     .st-booked { border-style: dashed !important; border-width: 2px; }

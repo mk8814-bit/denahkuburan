@@ -99,12 +99,6 @@ button, input, select, textarea {
     color: var(--white);
     padding: 1.5rem;
     flex-shrink: 0;
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
 }
 
 .sidebar-header {
@@ -121,10 +115,6 @@ button, input, select, textarea {
 
 .nav-list {
     list-style: none;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    transition: transform 0.1s ease-out;
 }
 
 .nav-item {
@@ -153,6 +143,7 @@ button, input, select, textarea {
 .main-content {
     flex-grow: 1;
     padding: 2rem;
+    overflow-y: auto;
 }
 
 .header {

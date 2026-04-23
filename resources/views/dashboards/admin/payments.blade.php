@@ -57,12 +57,8 @@
                 <tr>
                     <td>{{ $payment->user->name }}</td>
                     <td>
-                        @if($payment->grave)
-                            <strong>{{ $payment->grave->grave_number }} ({{ $payment->grave->block_name }})</strong><br>
-                            <small class="badge" style="background: var(--gray-100); color: var(--gray-700)">{{ ucfirst($payment->grave->religion) }}</small>
-                        @else
-                            <span style="color: var(--danger); font-size: 0.8rem;">[Makam Terhapus]</span>
-                        @endif
+                        <strong>{{ $payment->grave->grave_number }} ({{ $payment->grave->block_name }})</strong><br>
+                        <small class="badge" style="background: var(--gray-100); color: var(--gray-700)">{{ ucfirst($payment->grave->religion) }}</small>
                     </td>
                     <td>
                         @if($payment->proof)
@@ -143,7 +139,7 @@
         if(confirm('Apakah Anda yakin ingin menghapus data pembayaran ini?')) {
             var form = document.createElement('form');
             form.method = 'POST';
-            form.action = '{{ url("/admin/payments") }}/' + id;
+            form.action = '/admin/payments/' + id;
             form.innerHTML = '@csrf @method("DELETE")';
             document.body.appendChild(form);
             form.submit();

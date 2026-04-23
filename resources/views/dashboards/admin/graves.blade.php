@@ -97,17 +97,9 @@
 </div>
 
 <div class="card">
-    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+    <div class="card-header">
         <h3 class="card-title">Pengelolaan Data Makam</h3>
-        <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
-            <div style="position: relative;">
-                <i data-lucide="search" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 14px; color: var(--gray-400);"></i>
-                <input type="text" id="graveSearch" placeholder="Cari data makam..." class="form-control" style="padding-left: 30px; width: 220px; font-size: 0.85rem; height: 38px;">
-            </div>
-            <button class="btn btn-primary" onclick="toggleGraveForm()" style="height: 38px; display: flex; align-items: center; gap: 6px; padding: 0 1rem;">
-                <i data-lucide="plus" style="width: 16px;"></i> Tambah Makam
-            </button>
-        </div>
+        <button class="btn btn-primary" onclick="toggleGraveForm()"><i data-lucide="plus"></i> Tambah Makam</button>
     </div>
 
 <script>
@@ -148,25 +140,9 @@
             form.submit();
         }
     }
-
-    // Client-side Search Logic
-    document.addEventListener('DOMContentLoaded', function() {
-        const searchInput = document.getElementById('graveSearch');
-        if (searchInput) {
-            searchInput.addEventListener('keyup', function() {
-                const query = this.value.toLowerCase();
-                const rows = document.querySelectorAll('#graveTable tbody tr');
-                
-                rows.forEach(row => {
-                    const text = row.innerText.toLowerCase();
-                    row.style.display = text.includes(query) ? '' : 'none';
-                });
-            });
-        }
-    });
 </script>
     <div style="overflow-x: auto">
-        <table class="table" id="graveTable">
+        <table class="table">
             <thead>
                 <tr>
                     <th>Blok</th>

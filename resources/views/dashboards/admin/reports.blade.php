@@ -12,19 +12,16 @@
         .table th, .table td { border: 1px solid #000 !important; padding: 8px !important; }
     }
     .print-only { display: none; }
-    
-    /* PDF Styling tweaks */
-    .pdf-header { display: none; text-align: center; margin-bottom: 20px; border-bottom: 2px solid #333; padding-bottom: 10px; }
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-<div id="report-to-export">
-    <div class="print-only pdf-header">
-        <h1 style="margin: 0;">LAPORAN KEUANGAN DENAH MAKAM</h1>
-        <p>Dicetak pada: {{ date('d M Y H:i') }}</p>
+<div class="print-only">
+    <div style="text-align: center; margin-bottom: 2rem; border-bottom: 3px double #000; padding-bottom: 1rem;">
+        <h1 style="margin: 0; text-transform: uppercase;">Laporan Keuangan Denah Makam</h1>
+        <p style="margin: 5px 0 0 0;">Dicetak pada: {{ date('d M Y H:i') }}</p>
     </div>
+</div>
 
-    <div class="no-report no-print" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+<div class="no-print" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
     <div class="card">
         <div class="card-header">
             <h3 class="card-title">Tren Pemasukan Bulanan</h3>
@@ -61,25 +58,13 @@
 <div class="card">
     <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
         <h3 class="card-title">Detail Transaksi Keuangan</h3>
-        <div class="no-print" style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; justify-content: flex-end; flex: 1;">
-            <div style="display: flex; gap: 0.4rem; flex-wrap: wrap; justify-content: flex-end;">
-                <a href="{{ route('admin.reports.excel') }}" class="btn btn-success" style="background: #166534; border: none; display: flex; align-items: center; gap: 4px; height: 36px; padding: 0 0.75rem; font-size: 0.85rem;">
-                    <i data-lucide="file-spreadsheet" style="width: 14px;"></i> Excel
-                </a>
-                <a href="#" class="btn btn-info" style="background: #0891b2; border: none; display: flex; align-items: center; gap: 4px; color: white; height: 36px; padding: 0 0.75rem; font-size: 0.85rem;">
-                    <i data-lucide="file-code" style="width: 14px;"></i> CSV
-                </a>
-                <button onclick="exportToPDF()" class="btn btn-primary" style="display: flex; align-items: center; gap: 4px; background: var(--danger); border: none; height: 36px; padding: 0 0.75rem; font-size: 0.85rem;">
-                    <i data-lucide="download" style="width: 14px;"></i> PDF
-                </button>
-                <button onclick="window.print()" class="btn btn-primary" style="display: flex; align-items: center; gap: 4px; background: var(--gray-800); border: none; height: 36px; padding: 0 0.75rem; font-size: 0.85rem;">
-                    <i data-lucide="printer" style="width: 14px;"></i> Print
-                </button>
-            </div>
-            <div style="position: relative; width: 200px;">
-                <i data-lucide="search" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 14px; color: var(--gray-400);"></i>
-                <input type="text" id="transactionSearch" placeholder="Cari transaksi..." class="form-control" style="padding-left: 30px; width: 100%; font-size: 0.85rem; height: 36px; border: 1px solid var(--gray-200);">
-            </div>
+        <div class="no-print" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <a href="{{ route('admin.reports.excel') }}" class="btn btn-success" style="background: #166534; border: none; display: flex; align-items: center; gap: 6px;">
+                <i data-lucide="file-spreadsheet" style="width: 16px;"></i> Excel
+            </a>
+            <button onclick="window.print()" class="btn btn-primary" style="display: flex; align-items: center; gap: 6px;">
+                <i data-lucide="printer" style="width: 16px;"></i> PDF / Cetak
+            </button>
         </div>
     </div>
     <div style="overflow-x: auto">
@@ -103,11 +88,7 @@
                         <small style="color: var(--gray-500)">{{ $t->user->email }}</small>
                     </td>
                     <td>
-                        @if($t->grave)
-                            {{ $t->grave->grave_number }} ({{ $t->grave->block_name }})
-                        @else
-                            <span style="color: var(--danger); font-size: 0.8rem;">[Makam Terhapus]</span>
-                        @endif
+                        {{ $t->grave->grave_number }} ({{ $t->grave->block_name }})
                     </td>
                     <td>{{ \Carbon\Carbon::parse($t->payment_date)->format('d M Y') }}</td>
                     <td><span class="badge badge-success">Selesai</span></td>
@@ -131,7 +112,6 @@
             @endif
         </table>
     </div>
-</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -197,62 +177,5 @@
             }
         });
     });
-
-    // Client-side Search Logic
-    document.getElementById('transactionSearch').addEventListener('keyup', function() {
-        const query = this.value.toLowerCase();
-        const rows = document.querySelectorAll('tbody tr');
-        let foundAny = false;
-
-        rows.forEach(row => {
-            const text = row.innerText.toLowerCase();
-            if (text.includes(query)) {
-                row.style.display = '';
-                foundAny = true;
-            } else {
-                row.style.display = 'none';
-            }
-        });
-
-        // Handle "No results" row if necessary
-        const noResults = document.getElementById('noResultsRow');
-        if (!foundAny && !noResults) {
-            const tbody = document.querySelector('tbody');
-            const newRow = document.createElement('tr');
-            newRow.id = 'noResultsRow';
-            newRow.innerHTML = `<td colspan="6" style="text-align: center; color: var(--gray-500); padding: 2rem;">Data tidak ditemukan.</td>`;
-            tbody.appendChild(newRow);
-        } else if (foundAny && noResults) {
-            noResults.remove();
-        }
-    });
-
-    // Direct PDF Export Logic
-    function exportToPDF() {
-        const element = document.getElementById('report-to-export');
-        const pdfHeader = document.querySelector('.pdf-header');
-        const noPrint = document.querySelectorAll('.no-print');
-        const noReport = document.querySelectorAll('.no-report');
-        
-        // Prepare for export: show PDF header, hide sidebar/buttons/charts
-        pdfHeader.style.display = 'block';
-        noPrint.forEach(el => el.style.display = 'none');
-        noReport.forEach(el => el.style.display = 'none');
-
-        const opt = {
-            margin: 10,
-            filename: 'Laporan_Keuangan_' + new Date().toISOString().slice(0,10) + '.pdf',
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true, logging: false },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
-        };
-
-        html2pdf().set(opt).from(element).save().then(() => {
-            // Restore UI
-            pdfHeader.style.display = 'none';
-            noPrint.forEach(el => el.style.display = '');
-            noReport.forEach(el => el.style.display = 'grid'); // Restore as grid
-        });
-    }
 </script>
 @endsection

@@ -65,39 +65,46 @@
                 </li>
                 @endif
 
-                @if(auth()->user()->role === 'admin' || auth()->user()->role === 'super_admin' || auth()->user()->role === 'karyawan')
-                    
-                    @if(auth()->user()->role !== 'karyawan')
-                    <li class="nav-item">
-                        <a href="{{ route('admin.graves') }}" class="nav-link {{ request()->routeIs('admin.graves') ? 'active' : '' }}">
-                            <i data-lucide="database"></i> Data Makam
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.payments') }}" class="nav-link {{ request()->routeIs('admin.payments') ? 'active' : '' }}">
-                            <i data-lucide="credit-card"></i> Konfirmasi Bayar
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.reports') }}" class="nav-link {{ request()->routeIs('admin.reports') ? 'active' : '' }}">
-                            <i data-lucide="bar-chart"></i> Laporan Keuangan
-                        </a>
-                    </li>
-                    @else
-                    {{-- Karyawan Specific Data Makam --}}
-                    <li class="nav-item">
-                        <a href="{{ route('karyawan.graves') }}" class="nav-link {{ request()->routeIs('karyawan.graves') ? 'active' : '' }}">
-                            <i data-lucide="database"></i> Data Makam (Karyawan)
-                        </a>
-                    </li>
-                    @endif
+                @if(auth()->user()->role === 'admin' || auth()->user()->role === 'super_admin')
+                <li class="nav-item">
+                    <a href="{{ route('admin.graves') }}" class="nav-link {{ request()->routeIs('admin.graves') ? 'active' : '' }}">
+                        <i data-lucide="database"></i> Data Makam
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.payments') }}" class="nav-link {{ request()->routeIs('admin.payments') ? 'active' : '' }}">
+                        <i data-lucide="credit-card"></i> Konfirmasi Bayar
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.reports') }}" class="nav-link {{ request()->routeIs('admin.reports') ? 'active' : '' }}">
+                        <i data-lucide="bar-chart"></i> Laporan Keuangan
+                    </a>
+                </li>
 
-                    <li class="nav-item">
-                        <a href="{{ route('admin.heirs') }}" class="nav-link {{ request()->routeIs('admin.heirs') ? 'active' : '' }}">
-                            <i data-lucide="book-user"></i> Database Ahli Waris
-                        </a>
-                    </li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.heirs') }}" class="nav-link {{ request()->routeIs('admin.heirs') ? 'active' : '' }}">
+                        <i data-lucide="book-user"></i> Database Ahli Waris
+                    </a>
+                </li>
+                @endif
 
+                @if(auth()->user()->role === 'karyawan')
+                <li class="nav-item">
+                    <a href="{{ route('admin.reservations') }}" class="nav-link {{ request()->routeIs('admin.reservations') ? 'active' : '' }}">
+                        <i data-lucide="calendar-check"></i> Manajemen Reservasi
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.maintenance') }}" class="nav-link {{ request()->routeIs('admin.maintenance') ? 'active' : '' }}">
+                        <i data-lucide="wrench"></i> Jadwal Pemeliharaan
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.heirs') }}" class="nav-link {{ request()->routeIs('admin.heirs') ? 'active' : '' }}">
+                        <i data-lucide="book-user"></i> Database Ahli Waris
+                    </a>
+                </li>
                 @endif
 
                 <li class="nav-item">
@@ -106,7 +113,7 @@
                     </a>
                 </li>
 
-                <li class="nav-item">
+                <li class="nav-item" style="margin-top: auto">
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
                         <button type="submit" class="nav-link" style="width: 100%; border: none; cursor: pointer; text-align: left; background: none">
@@ -256,45 +263,7 @@
     @endif
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            lucide.createIcons();
-
-            // Universal Sidebar Parallax Logic
-            const sidebar = document.querySelector('.sidebar');
-            const navList = document.querySelector('.nav-list');
-            const sidebarHeader = document.querySelector('.sidebar-header');
-            
-            if (sidebar && navList && sidebarHeader) {
-                const handleScroll = () => {
-                    const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
-                    if (totalHeight <= 0) return;
-
-                    const scrollProgress = window.pageYOffset / totalHeight;
-                    
-                    const sidebarStyle = window.getComputedStyle(sidebar);
-                    const paddingTotal = parseFloat(sidebarStyle.paddingTop) + parseFloat(sidebarStyle.paddingBottom);
-                    
-                    const currentTransform = navList.style.transform;
-                    navList.style.transform = 'none';
-                    const navHeight = navList.offsetHeight;
-                    navList.style.transform = currentTransform;
-
-                    const headerHeight = sidebarHeader.offsetHeight + parseFloat(window.getComputedStyle(sidebarHeader).marginBottom);
-                    const availableSpace = sidebar.clientHeight - headerHeight - navHeight - paddingTotal;
-                    
-                    if (availableSpace > 0) {
-                        const moveDistance = scrollProgress * availableSpace;
-                        navList.style.transform = `translateY(${moveDistance}px)`;
-                    } else {
-                        navList.style.transform = 'none';
-                    }
-                };
-
-                window.addEventListener('scroll', handleScroll);
-                window.addEventListener('resize', handleScroll);
-                setTimeout(handleScroll, 100); 
-            }
-        });
+        lucide.createIcons();
     </script>
 </body>
 </html>
