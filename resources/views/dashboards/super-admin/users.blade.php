@@ -127,7 +127,15 @@
                         <tr>
                             <td>
                                 <div style="display: flex; align-items: center; gap: 0.75rem">
-                                    <div class="user-img" style="width: 32px; height: 32px; background-size: cover; background-position: center; {{ $user->photo ? 'background-image: url(/storage/'.$user->photo.')' : '' }}"></div>
+                                    @php
+                                        $userBg = '';
+                                        if ($user->photo) {
+                                            $userBg = "url('/storage/" . $user->photo . "')";
+                                        } elseif ($user->avatar) {
+                                            $userBg = "url('" . $user->avatar . "')";
+                                        }
+                                    @endphp
+                                    <div class="user-img" style="width: 32px; height: 32px; background-size: cover; background-position: center; border-radius: 50%; background-color: var(--gray-300); {{ $userBg ? 'background-image: ' . $userBg : '' }}"></div>
                                     {{ $user->name }}
                                 </div>
                             </td>

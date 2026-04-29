@@ -62,7 +62,10 @@
                     </td>
                     <td>
                         @if($payment->proof)
-                        <button class="btn btn-secondary" style="padding: 0.3rem" onclick="viewProof('/storage/{{ $payment->proof }}')">
+                        @php
+                            $proofUrl = str_starts_with($payment->proof, 'http') ? $payment->proof : asset('storage/' . $payment->proof);
+                        @endphp
+                        <button class="btn btn-secondary" style="padding: 0.3rem" onclick="viewProof('{{ $proofUrl }}')">
                             <i data-lucide="image" style="width: 16px; height: 16px"></i> Lihat
                         </button>
                         @else

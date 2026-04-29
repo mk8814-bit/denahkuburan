@@ -73,6 +73,23 @@ class AdminController extends Controller
         $this->generateFileStream($transactions, $filename);
     }
 
+    public function exportPdf()
+    {
+        $transactions = Payment::with(['user', 'grave'])
+            ->where('status', 'confirmed')
+            ->latest('payment_date')
+            ->get();
+
+        $total_income = $transactions->sum('amount');
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('dashboards.admin.reports_pdf', [
+            'transactions' => $transactions,
+            'total_income' => $total_income
+        ]);
+
+        return $pdf->download("Laporan_Keuangan_" . date('Y-m-d') . ".pdf");
+    }
+
     private function generateFileStream($transactions, $filename)
     {
         $handle = fopen('php://output', 'w');
@@ -122,6 +139,62 @@ class AdminController extends Controller
         Grave::create($validated);
 
         return back()->with('success', 'Data makam berhasil ditambahkan.');
+    }
+
+    public function generateAutoBlock(Request $request)
+    {
+        $validated = $request->validate([
+            'religion' => 'required|string',
+            'amount' => 'required|integer|min:1|max:100',
+        ]);
+
+        $religion = $validated['religion'];
+        $amount = $validated['amount'];
+
+        // Cek apakah masih ada makam kosong untuk agama tersebut
+        $availableCount = Grave::where('religion', $religion)->where('status', 'available')->count();
+        if ($availableCount > 0) {
+            return back()->with('error', "Gagal membuat blok otomatis. Masih ada $availableCount makam kosong (belum terisi) untuk agama " . ucfirst($religion) . " di blok sebelumnya.");
+        }
+
+        // Cari blok yang sudah ada untuk agama ini
+        $existingBlocks = Grave::where('religion', $religion)->pluck('block_name')->unique()->toArray();
+        
+        // Cari blok yang berakhiran .1 (contoh: A.1, B.1, dst)
+        $suffixBlocks = array_filter($existingBlocks, function($name) {
+            return preg_match('/^[A-Z]\.1$/', strtoupper($name));
+        });
+
+        if (empty($suffixBlocks)) {
+            $nextBlockName = 'A.1';
+        } else {
+            // Ambil huruf pertama dari blok-blok tersebut
+            $letters = array_map(function($name) {
+                return substr(strtoupper($name), 0, 1);
+            }, $suffixBlocks);
+            
+            $maxLetter = max($letters);
+            
+            // Jika sudah mencapai Z, tidak otomatis lanjut ke AA (bisa disesuaikan nanti jika butuh)
+            if ($maxLetter == 'Z') {
+                return back()->with('error', "Batas pembuatan blok otomatis (Z.1) telah tercapai.");
+            }
+            
+            $nextLetter = ++$maxLetter;
+            $nextBlockName = $nextLetter . '.1';
+        }
+
+        // Generate makam
+        for ($i = 1; $i <= $amount; $i++) {
+            Grave::create([
+                'block_name' => $nextBlockName,
+                'grave_number' => str_pad($i, 2, '0', STR_PAD_LEFT), // 01, 02, dst.
+                'religion' => $religion,
+                'status' => 'available',
+            ]);
+        }
+
+        return back()->with('success', "Berhasil menambahkan $amount makam baru secara otomatis di blok $nextBlockName untuk agama " . ucfirst($religion) . ".");
     }
 
     public function updateGrave(Request $request, Grave $grave)
@@ -253,10 +326,22 @@ class AdminController extends Controller
         return back()->with('success', 'Jadwal pemeliharaan berhasil dihapus.');
     }
 
-    public function heirs()
+    public function heirs(Request $request)
     {
+        $query = Grave::whereNotNull('heir_name');
+
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('heir_name', 'like', "%{$search}%")
+                  ->orWhere('buried_name', 'like', "%{$search}%")
+                  ->orWhere('block_name', 'like', "%{$search}%")
+                  ->orWhere('grave_number', 'like', "%{$search}%");
+            });
+        }
+
         return view('dashboards.admin.heirs', [
-            'heirs' => Grave::whereNotNull('heir_name')->latest()->get(),
+            'heirs' => $query->latest()->get(),
         ]);
     }
 }

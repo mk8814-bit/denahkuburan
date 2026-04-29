@@ -35,6 +35,12 @@ class ProfileController extends Controller
 
         $user->save();
 
-        return redirect()->back()->with('success', 'Profil berhasil diperbarui!');
+        $dashRoute = 'dashboard';
+        if ($user->role === 'super_admin') $dashRoute = 'super-admin.dashboard';
+        elseif ($user->role === 'admin') $dashRoute = 'admin.dashboard';
+        elseif ($user->role === 'karyawan') $dashRoute = 'karyawan.dashboard';
+        elseif ($user->role === 'customer') $dashRoute = 'customer.dashboard';
+
+        return redirect()->route($dashRoute)->with('success', 'Profil berhasil diperbarui!');
     }
 }

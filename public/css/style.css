@@ -257,7 +257,6 @@ button, input, select, textarea {
     font-size: 0.75rem;
     font-weight: 600;
     border-radius: 9999px;
-    text-transform: uppercase;
 }
 
 .badge-available { background: #dcfce7; color: #166534; }

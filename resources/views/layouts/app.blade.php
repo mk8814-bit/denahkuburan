@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $title ?? 'Denah Kuburan' }} - Management System</title>
+    <title>{{ $title ?? \App\Models\Setting::where('key', 'cemetery_name')->value('value') ?? 'DenahMakam' }} - Management System</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,7 +17,7 @@
         <aside class="sidebar">
             <div class="sidebar-header">
                 <i data-lucide="map-pin" style="color: var(--primary)"></i>
-                <h2>DenahMakam</h2>
+                <h2>{{ \App\Models\Setting::where('key', 'cemetery_name')->value('value') ?? 'DenahMakam' }}</h2>
             </div>
             <nav class="nav-list">
                 <li class="nav-item">
@@ -132,7 +132,15 @@
                 </div>
                 <div class="user-profile">
                     <a href="{{ route('profile.edit') }}">
-                        <div class="user-img" style="{{ auth()->user()->photo ? "background-image: url('/storage/" . auth()->user()->photo . "'); background-size: cover; background-position: center;" : "background: var(--gray-300);" }} border: 2px solid var(--primary); cursor: pointer; border-radius: 50%; width: 40px; height: 40px;"></div>
+                        @php
+                            $bgImage = '';
+                            if (auth()->user()->photo) {
+                                $bgImage = "url('/storage/" . auth()->user()->photo . "')";
+                            } elseif (auth()->user()->avatar) {
+                                $bgImage = "url('" . auth()->user()->avatar . "')";
+                            }
+                        @endphp
+                        <div class="user-img" style="{{ $bgImage ? "background-image: " . $bgImage . "; background-size: cover; background-position: center;" : "background: var(--gray-300);" }} border: 2px solid var(--primary); cursor: pointer; border-radius: 50%; width: 40px; height: 40px;"></div>
                     </a>
                 </div>
             </div>
@@ -165,7 +173,7 @@
                     <i data-lucide="bot" style="width: 18px;"></i>
                 </div>
                 <div>
-                    <div style="font-weight: 700; font-size: 0.9rem;">Asisten DenahMakam</div>
+                    <div style="font-weight: 700; font-size: 0.9rem;">Asisten {{ \App\Models\Setting::where('key', 'cemetery_name')->value('value') ?? 'DenahMakam' }}</div>
                     <div style="font-size: 0.7rem; opacity: 0.8;">Online • Siap membantu</div>
                 </div>
             </div>

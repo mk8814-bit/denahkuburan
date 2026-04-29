@@ -9,7 +9,8 @@ use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\ProfileController;
 
 Route::get('/', function () {
-    return view('welcome');
+    $customers = \App\Models\User::where('role', 'customer')->get();
+    return view('welcome', compact('customers'));
 });
 
 // Auth Routes
@@ -18,6 +19,14 @@ Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// Google OAuth Routes
+Route::get('/auth/google', [\App\Http\Controllers\GoogleAuthController::class, 'redirect'])->name('google.login');
+Route::get('/auth/google/callback', [\App\Http\Controllers\GoogleAuthController::class, 'callback'])->name('google.callback');
+
+// OTP Routes
+Route::post('/otp/send',   [\App\Http\Controllers\OtpController::class, 'send'])->name('otp.send');
+Route::post('/otp/verify', [\App\Http\Controllers\OtpController::class, 'verify'])->name('otp.verify');
 
 // OpenRouter Chatbot Route
 Route::post('/chatbot', [\App\Http\Controllers\ChatbotController::class, 'chat'])->middleware('auth');
@@ -46,6 +55,7 @@ Route::middleware(['auth'])->group(function () {
     // Admin Routes (Admin & Super Admin)
     Route::middleware(['role:admin,super_admin'])->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
+        Route::post('/graves/generate-block', [AdminController::class, 'generateAutoBlock'])->name('graves.generate-block');
         Route::get('/graves', [AdminController::class, 'graves'])->name('graves');
         Route::post('/graves', [AdminController::class, 'storeGrave'])->name('graves.store');
         Route::put('/graves/{grave}', [AdminController::class, 'updateGrave'])->name('graves.update');
@@ -56,6 +66,7 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/payments/{payment}', [AdminController::class, 'deletePayment'])->name('payments.destroy');
         Route::get('/reports', [AdminController::class, 'reports'])->name('reports');
         Route::get('/reports/excel', [AdminController::class, 'exportExcel'])->name('reports.excel');
+        Route::get('/reports/pdf', [AdminController::class, 'exportPdf'])->name('reports.pdf');
     });
 
     // Shared Routes (Admin, Super Admin, Karyawan)

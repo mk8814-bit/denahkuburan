@@ -62,8 +62,11 @@
             <a href="{{ route('admin.reports.excel') }}" class="btn btn-success" style="background: #166534; border: none; display: flex; align-items: center; gap: 6px;">
                 <i data-lucide="file-spreadsheet" style="width: 16px;"></i> Excel
             </a>
+            <a href="{{ route('admin.reports.pdf') }}" class="btn btn-danger" style="background: #dc2626; border: none; display: flex; align-items: center; gap: 6px; color: white;">
+                <i data-lucide="file-text" style="width: 16px;"></i> PDF
+            </a>
             <button onclick="window.print()" class="btn btn-primary" style="display: flex; align-items: center; gap: 6px;">
-                <i data-lucide="printer" style="width: 16px;"></i> PDF / Cetak
+                <i data-lucide="printer" style="width: 16px;"></i> Cetak
             </button>
         </div>
     </div>

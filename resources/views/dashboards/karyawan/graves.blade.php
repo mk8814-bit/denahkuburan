@@ -63,7 +63,16 @@
                     <td>{{ $grave->grave_number }}</td>
                     <td>{{ $grave->buried_name ?? '-' }}</td>
                     <td>{{ $grave->heir_name ?? '-' }}</td>
-                    <td><span class="badge badge-{{ $grave->status }}">{{ $grave->status }}</span></td>
+                    <td>
+                        @php
+                            $s = strtolower($grave->status);
+                            if ($s === 'occupied') $label = 'Terisi';
+                            elseif ($s === 'available') $label = 'Belum Terisi';
+                            elseif ($s === 'booked') $label = 'Dipesan';
+                            else $label = $grave->status;
+                        @endphp
+                        <span class="badge badge-{{ $s }}">{{ $label }}</span>
+                    </td>
                 </tr>
                 @endforeach
             </tbody>
